@@ -4,6 +4,10 @@ from main import app
 client = TestClient(app)
 
 def test_generate_checksum():
-    response = client.post("/generate/checksum", json={"text": "hello"})
+    response = client.post(
+        "/generate-checksum",
+        json={"text": "hello"}
+    )
     assert response.status_code == 200
-    assert "checksum" in response.json()
+    data = response.json()
+    assert "checksum" in data

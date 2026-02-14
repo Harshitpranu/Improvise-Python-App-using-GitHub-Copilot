@@ -4,23 +4,31 @@ import hashlib
 
 app = FastAPI()
 
-def generate(text: str) -> str:
-    """
-    Generate a checksum (pseudo-random token) for the given text.
-    """
-    return hashlib.sha256(text.encode()).hexdigest()
-
-class TextInput(BaseModel):
+# Pydantic model to accept JSON body
+class TextRequest(BaseModel):
     text: str
-
-@app.post("/generate/checksum")
-def generate_checksum(payload: TextInput):
-    """
-    Accepts input text and returns a checksum generated using the generate() function.
-    """
-    checksum = generate(payload.text)
-    return {"checksum": checksum}
 
 @app.get("/")
 def welcome():
-    return {"message": "Welcome Harshit! This API generates pseudo-random tokens."}
+    """
+    Welcome API with participant name
+    """
+    return {
+        "message": "Welcome to Token Generator API!",
+        "participant": "Harshit Srivastava",
+        "organization": "Accenture"
+    }
+
+@app.post("/generate-checksum")
+def generate_checksum(payload: TextRequest):
+    """
+    This API accepts text in JSON body and returns checksum of the text
+    """
+    text = payload.text
+    checksum = hashlib.sha256(text.encode()).hexdigest()
+
+    return {
+        "input_text": text,
+        "checksum": checksum
+    }
+
